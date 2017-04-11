@@ -112,9 +112,9 @@ static AudioStreamBasicDescription AWSignedIntegerLinearPCMStreamDescription();
 	assert(status == noErr);
 	
 	// 初始化 Audio Converter 要使用的 buffer list，converter 會將轉換完成的 LPCM 資料放入到此 bufferList 中
-	// Audio Converter 的 buffer list 是用來放 LPCM 資料，所以：
+	// Audio Converter 的 buffer list 是用來放 LPCM 資料：
+	// 4096: 讓 buffer 裡面可以塞到 4096 個 frame 大小。Audio Unit Render Callback 中要求多少資料量是會變動的(inNumberOfFrames)，平常一次會跟我們要求 1024 個 frame，但是當 iOS 裝置在 lock screen 的時候，基於節電理由，會變成一次跟我們要比較多的資料，變成 4096 個 frame，所以 buffer size 至少要提供 4096 個 frame。
 	// 4: 每個 frame 有四個 byte (一個 frame 裡有 2 channels，一個 channel 有 16 bits)
-	// 4096: 讓 buffer 裡面可以塞到 4096 個 frame 大小
 	UInt32 bufferSize = 4096 * 4;
 	renderBufferSize = bufferSize;
 	renderBufferList = (AudioBufferList *)calloc(1, sizeof(UInt32) + sizeof(AudioBuffer));
